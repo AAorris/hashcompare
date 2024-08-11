@@ -91,7 +91,7 @@ export function AppContextProvider({ children }: AppContextProviderProps) {
 						config={betaDistributions}
 						colors={["#8884d8", "#82ca9d"]}
 						increment={0.01}
-						confidence={0.95}
+						confidence={0.9}
 					/>
 				</div>
 			</CardContent>

@@ -38,8 +38,8 @@ export function probabilityBounds(
 ) {
   const k = confidencePercentage / 100;
   return {
-    low: quantile(1 - k, alpha, beta),
-    high: quantile(k, alpha, beta),
+    high: quantile(1 - k, alpha, beta),
+    low: quantile(k, alpha, beta),
   };
 }
 

@@ -46,7 +46,15 @@ export function BetaChart({ config, colors, increment, confidence }: Props) {
 		return result;
 	}, [increment, config]);
 
-	const variants = Object.keys(config ?? {}).sort((a, b) => a.localeCompare(b));
+	const variants = useMemo(
+		() => Object.keys(config ?? {}).sort((a, b) => a.localeCompare(b)),
+		[config],
+	);
+	try {
+		console.log(probabilityArea(config![variants[0]], confidence));
+	} catch (e) {
+		void 1;
+	}
 
 	return (
 		<div>
@@ -72,44 +80,26 @@ export function BetaChart({ config, colors, increment, confidence }: Props) {
 						type="number"
 						dataKey="x"
 						color="white"
-						tickCount={5}
-						tickFormatter={(v) => `${(v * 100).toString()}%`}
-						domain={[0.8, 1]}
+						tickCount={4}
+						tickFormatter={(v) => `${(v * 100).toFixed(2)}%`}
+						domain={[0.7, 1]}
 					/>
-					{variants.length < 4
-						? variants.map((variant, idx) => (
-								<div key={variant}>
-									<ReferenceArea
-										key={`${variant}-area`}
-										className={"hover"}
-										{...probabilityArea(config![variant], confidence)}
-										fill={`url(#color${idx})`}
-										fillOpacity={0.05}
-										stroke={colors[idx]}
-										strokeOpacity={0.4}
-										strokeDasharray={"4"}
-										strokeWidth={2}
-									/>
-									<ReferenceLine
-										key={`${variant}-line`}
-										className={"hover"}
-										x={highestProbability(config![variant])}
-										stroke={colors[idx]}
-										strokeDasharray={"8"}
-										strokeWidth={2}
-									/>
-								</div>
-							))
-						: variants.map((variant, idx) => (
-								<ReferenceLine
-									key={`${variant}-line`}
-									className={"hover"}
-									x={highestProbability(config![variant])}
-									stroke={colors[idx]}
-									strokeDasharray={"8"}
-									strokeWidth={2}
-								/>
-							))}
+					{variants.map((variant, idx) => (
+						<ReferenceArea
+							key={`${variant}-area`}
+							// className={"hover"}
+							{...probabilityArea(config![variant], confidence)}
+							ifOverflow="extendDomain"
+							isFront={true}
+							opacity={0.5}
+							strokeWidth={2}
+							fill={colors[idx]}
+							fillOpacity={0.15}
+							stroke={colors[idx]}
+							strokeOpacity={0.4}
+							strokeDasharray={"4"}
+						/>
+					))}
 					{config &&
 						variants.map((variant, idx) => (
 							<Area
