@@ -1,6 +1,6 @@
 "use client";
 import type React from "react";
-import { createContext, useState, useContext, Dispatch } from "react";
+import { createContext, useState, useContext, type Dispatch } from "react";
 import {
 	Card,
 	CardHeader,
@@ -40,8 +40,8 @@ interface AppContextProviderProps {
 }
 
 export function AppContextProvider({ children }: AppContextProviderProps) {
-	const [buckets, setBuckets] = useState(10);
-	const [samples, setSamples] = useState(1000);
+	const [buckets, setBuckets] = useState(2);
+	const [samples, setSamples] = useState(4000);
 	const [betaDistributions, setBetaDistributions] = useState<
 		Record<string, [number, number]>
 	>({});
