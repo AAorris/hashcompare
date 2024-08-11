@@ -1,14 +1,15 @@
-import Chart from "./chart";
-import { HashSettingsProvider } from "./settings";
+import Chart from "./data-chart";
+import { AppContextProvider } from "./app-context";
 
 export default function Home() {
+	const colors = ["#8884d8", "#82ca9d"];
 	return (
-		<HashSettingsProvider>
+		<AppContextProvider>
 			<div className="grid grid-cols-2 gap-4 mt-4">
-				<Chart hashFunction="xxhash" />
-				<Chart hashFunction="fnv1a" />
+				<Chart hashFunction="xxhash" color={colors[0]} />
+				<Chart hashFunction="fnv1a" color={colors[1]} />
 				{/* <Chart hashFunction="simpleHash" /> */}
 			</div>
-		</HashSettingsProvider>
+		</AppContextProvider>
 	);
 }

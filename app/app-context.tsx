@@ -1,6 +1,6 @@
 "use client";
 import type React from "react";
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, Dispatch } from "react";
 import {
 	Card,
 	CardHeader,
@@ -10,20 +10,23 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import BetaChart from "./beta-chart";
 
 // Define the shape of our settings
-interface HashSettings {
+interface AppContextData {
 	buckets: number;
 	samples: number;
+	setBetaDistributions: Dispatch<
+		React.SetStateAction<Record<string, [number, number]>>
+	>;
 }
 
 // Create a context for our settings
-const HashSettingsContext = createContext<HashSettings | undefined>(undefined);
+const AppContext = createContext<AppContextData | undefined>(undefined);
 
 // Custom hook to use our settings
-export const useHashSettings = () => {
-	const context = useContext(HashSettingsContext);
+export const useAppContext = () => {
+	const context = useContext(AppContext);
 	if (context === undefined) {
 		throw new Error(
 			"useHashSettings must be used within a HashSettingsProvider",
@@ -32,19 +35,16 @@ export const useHashSettings = () => {
 	return context;
 };
 
-interface HashSettingsProviderProps {
+interface AppContextProviderProps {
 	children: React.ReactNode;
 }
 
-export function HashSettingsProvider({ children }: HashSettingsProviderProps) {
+export function AppContextProvider({ children }: AppContextProviderProps) {
 	const [buckets, setBuckets] = useState(10);
 	const [samples, setSamples] = useState(1000);
-	const [key, setKey] = useState(0);
-
-	const regenerate = () => {
-		setKey((prevKey) => prevKey + 1);
-	};
-
+	const [betaDistributions, setBetaDistributions] = useState<
+		Record<string, [number, number]>
+	>({});
 	return (
 		<Card className="w-full max-w-[95vw] mx-auto">
 			<CardHeader>
@@ -80,12 +80,20 @@ export function HashSettingsProvider({ children }: HashSettingsProviderProps) {
 						/>
 					</div>
 				</div>
-				<Button onClick={regenerate} className="w-full">
-					Regenerate
-				</Button>
-				<HashSettingsContext.Provider value={{ buckets, samples }}>
-					<div key={key}>{children}</div>
-				</HashSettingsContext.Provider>
+				<AppContext.Provider value={{ buckets, samples, setBetaDistributions }}>
+					<div>{children}</div>
+				</AppContext.Provider>
+				<div className="mt-4">
+					<h3 className="text-lg font-semibold mb-2">
+						Beta Distribution of KS Test Results
+					</h3>
+					<BetaChart
+						config={betaDistributions}
+						colors={["#8884d8", "#82ca9d"]}
+						increment={0.01}
+						confidence={0.95}
+					/>
+				</div>
 			</CardContent>
 		</Card>
 	);
